@@ -1,0 +1,150 @@
+openapi: 3.0.3
+info:
+  title: Library Management API
+  description: API for managing a library, including books.
+  version: 1.0.0
+servers:
+  - url: http://localhost:5000/books
+    description: Local development server
+paths:
+  /books:
+    post:
+      summary: Add a new book
+      description: Add a new book to the library.
+      operationId: addBook
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                author:
+                  type: string
+                year:
+                  type: integer
+                isbn:
+                  type: string
+                genre:
+                  type: string
+              required:
+                - title
+                - author
+                - year
+                - isbn
+                - genre
+            example:
+              title: The Great Gatsby
+              author: F. Scott Fitzgerald
+              year: 1925
+              isbn: 9780743273565
+              genre: Classic
+      responses:
+        201:
+          description: Book successfully added.
+    get:
+      summary: Get all books
+      description: Retrieve a list of all books.
+      operationId: getBooks
+      responses:
+        200:
+          description: A list of books.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    title:
+                      type: string
+                    author:
+                      type: string
+                    year:
+                      type: integer
+                    isbn:
+                      type: string
+                    genre:
+                      type: string
+  /books/search:
+    get:
+      summary: Search for a book by author
+      description: Retrieve books based on the author's name.
+      operationId: searchBooks
+      parameters:
+        - name: author
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Books matching the author.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    title:
+                      type: string
+                    author:
+                      type: string
+                    year:
+                      type: integer
+                    isbn:
+                      type: string
+                    genre:
+                      type: string
+  /books/{isbn}:
+    put:
+      summary: Update book details
+      description: Update the details of a book using its ISBN.
+      operationId: updateBook
+      parameters:
+        - name: isbn
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                year:
+                  type: integer
+              example:
+                title: The Great Gatsby (Updated)
+                year: 1926
+      responses:
+        200:
+          description: Book successfully updated.
+    delete:
+      summary: Delete a book
+      description: Remove a book from the library using its ISBN.
+      operationId: deleteBook
+      parameters:
+        - name: isbn
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        204:
+          description: Book successfully deleted.
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+security:
+  - BearerAuth: []
